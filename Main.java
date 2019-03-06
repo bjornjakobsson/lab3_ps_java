@@ -4,6 +4,14 @@ public class Main {
     public static void main (String[] input) {
         Graph g = new Graph();
 
+        IntWeight a = new IntWeight(3);
+        IntWeight b = new IntWeight(2);
+
+
+        System.out.println(a.sum(a.getWeight(),b.getWeight()));
+        System.out.println(a.compare(a.getWeight(),b.getWeight()));
+
+
         g.add_vertex(1);
         g.add_vertex(2);
         g.add_vertex(3);

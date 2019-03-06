@@ -49,13 +49,13 @@ public class Graph {
 
         while(!unmarkedVertices.isEmpty()) {
             Vertex v = unmarkedVertices.pop();
-            visit(v,unmarkedVertices,orderedVertices);
+            visit(v,orderedVertices);
 
         }
         return orderedVertices;
     }
 
-    private void visit(Vertex v,LinkedList<Vertex> unmarkedVertices,  LinkedList<Vertex> orderedVertices) throws CreatesCycleException{
+    private void visit(Vertex v,  LinkedList<Vertex> orderedVertices) throws CreatesCycleException{
         if(v.isPermMark()) {
             return;
         }
@@ -65,7 +65,7 @@ public class Graph {
         v.setTempMark(true);
 
         for (Vertex m: getOutgoing(v)) {
-            visit(m,unmarkedVertices,orderedVertices);
+            visit(m,orderedVertices);
         }
         v.setPermMark(true);
         orderedVertices.push(v);

@@ -1,13 +1,16 @@
 import java.util.LinkedList;
 
-public class Vertex {
+public class Vertex <T> {
 
     private int id;
-    private int weight;
+    private T weight;
+
+
+
     private boolean permMark;
     private boolean tempMark;
 
-    public Vertex (int id, int weight){
+    public Vertex (int id, T weight){
         this.id=id;
         this.weight=weight;
         this.permMark=false;
@@ -20,7 +23,8 @@ public class Vertex {
     public int getId(){
         return id;
     }
-    public int getWeight(){
+
+    public T getWeight(){
         return weight;
     }
 
