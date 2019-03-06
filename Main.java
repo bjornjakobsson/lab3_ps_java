@@ -8,17 +8,19 @@ public class Main {
         IntWeight b = new IntWeight(2);
 
 
-        System.out.println(a.sum(a.getWeight(),b.getWeight()));
-        System.out.println(a.compare(a.getWeight(),b.getWeight()));
+        try {
+            g.add_vertex(1);
+            g.add_vertex(2);
+            g.add_vertex(3);
+            g.add_vertex(4);
+            g.add_vertex(5);
+            g.add_vertex(6);
+        }catch (IllegalAccessException e){
+            System.out.println(e.toString());
+        }
 
-
-        g.add_vertex(1);
-        g.add_vertex(2);
-        g.add_vertex(3);
-        g.add_vertex(4);
-        g.add_vertex(5);
-        g.add_vertex(6);
-
+        Vertex s = (Vertex) g.getVertices().getFirst();
+        System.out.println(s.getWeight());
 
         g.add_edge(6,3,7);
         g.add_edge(6, 1, 0);

@@ -1,12 +1,12 @@
-public class Edge {
+public class Edge <T>{
 
     private Vertex startVertex;
     private Vertex endVertex;
-    private int weight;
+    private T weight;
 
 
 
-    public Edge(Vertex startVertex, Vertex endVertex, int weight){
+    public Edge(Vertex startVertex, Vertex endVertex, T weight){
         this.startVertex = startVertex;
         this.endVertex = endVertex;
         this.weight=weight;
@@ -20,7 +20,7 @@ public class Edge {
         return endVertex;
     }
 
-    public int getWeight(){
+    public T getWeight(){
         return weight;
     }
 

@@ -1,6 +1,7 @@
 import java.util.LinkedList;
+import java.util.Stack;
 
-public class Graph {
+public class Graph <T>{
 
     private LinkedList<Vertex> vertices;
     private LinkedList<Edge> edges;
@@ -10,19 +11,25 @@ public class Graph {
         this.edges=new LinkedList<>();
     }
 
-    public Graph(LinkedList<Vertex> vertices, LinkedList<Edge> edges){
-        this.vertices=vertices;
-        this.edges=edges;
-    }
 
-    public int add_vertex(int weight){
-        Vertex newVertex = new Vertex(vertices.size()+1,weight);
-        vertices.add(newVertex);
+    public int add_vertex(T weight) throws IllegalAccessException{
+        Vertex newVertex = new Vertex(vertices.size()+1, weight);
 
+
+        if(!vertices.isEmpty()){
+            Vertex tmp = vertices.getFirst();
+            if(tmp.getWeight().getClass()!=weight.getClass()){
+                throw new IllegalAccessException("Not the same weight type");
+            }else{
+                vertices.add(newVertex);
+            }
+        }else{
+            vertices.add(newVertex);
+        }
         return newVertex.getId();
     }
 
-    public void add_edge(int startId, int endId, int weight){
+    public void add_edge(int startId, int endId, T weight){
 
         Vertex startVertex=new Vertex();
         Vertex endVertex=new Vertex();
@@ -53,7 +60,25 @@ public class Graph {
 
         }
         return orderedVertices;
+
+
     }
+
+    public T f(Vertex v){
+        return (T) v.getWeight();
+    }
+    public T g(Edge e){
+        return (T) e.getWeight();
+    }
+
+/*    public T longest_path(Vertex startNode, Vertex endNode){
+
+        Stack notVisited= new Stack();
+        notVisited.push(getOutgoing(startNode));
+
+
+    }*/
+
 
     private void visit(Vertex v,  LinkedList<Vertex> orderedVertices) throws CreatesCycleException{
         if(v.isPermMark()) {
@@ -87,15 +112,30 @@ public class Graph {
 
     }
 
-    private LinkedList<Vertex> getUnmarked(){
-        LinkedList<Vertex> unmarked=new LinkedList<>();
-        for (Vertex v: vertices) {
-            if(!v.isPermMark()&&!v.isTempMark()){
-                unmarked.add(v);
-            }
-        }
-        return unmarked;
-    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
     public LinkedList<Vertex> getVertices(){
