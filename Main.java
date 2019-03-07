@@ -2,7 +2,7 @@ import sun.awt.image.ImageWatched;
 
 import java.util.LinkedList;
 
-public class Main<T> {
+public class Main {
     public static void main (String[] input) {
         Graph g = new Graph();
 
@@ -14,6 +14,7 @@ public class Main<T> {
         IntWeight f = new IntWeight(6);
         IntWeight h = new IntWeight(7);
         IntWeight i = new IntWeight(8);
+        
 
         try{
             g.add_vertex(a);
@@ -24,6 +25,7 @@ public class Main<T> {
             g.add_vertex(f);
             g.add_vertex(h);
             g.add_vertex(i);
+
         }catch (IllegalAccessException ex){
             System.out.println(e.toString());
         }
@@ -33,11 +35,14 @@ public class Main<T> {
 
         g.add_edge(2,4,a);
         g.add_edge(2,5,a);
+        g.add_edge(2,8,a);
+
         g.add_edge(4,8,a);
 
         g.add_edge(3,6,a);
         g.add_edge(3,7,a);
         g.add_edge(3,8,a);
+        //g.add_edge(3,8,a);
 
         g.add_edge(6,8,a);
 
