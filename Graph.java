@@ -1,3 +1,5 @@
+import sun.awt.image.ImageWatched;
+
 import java.util.LinkedList;
 import java.util.Stack;
 
@@ -44,6 +46,7 @@ public class Graph <T>{
         }
 
         Edge newEdge = new Edge(startVertex,endVertex, weight);
+        startVertex.incrementNeighbours();
         edges.add(newEdge);
 
     }
@@ -64,20 +67,6 @@ public class Graph <T>{
 
     }
 
-    public T f(Vertex v){
-        return (T) v.getWeight();
-    }
-    public T g(Edge e){
-        return (T) e.getWeight();
-    }
-
-/*    public T longest_path(Vertex startNode, Vertex endNode){
-
-        Stack notVisited= new Stack();
-        notVisited.push(getOutgoing(startNode));
-
-
-    }*/
 
 
     private void visit(Vertex v,  LinkedList<Vertex> orderedVertices) throws CreatesCycleException{
@@ -112,32 +101,6 @@ public class Graph <T>{
 
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     public LinkedList<Vertex> getVertices(){
         return vertices;
     }
@@ -161,8 +124,153 @@ public class Graph <T>{
 
     }
 
-    public void longestPath(Graph g){
+    public T longest_path3(Vertex startVertex, Vertex endVertex, WeightInterface wi){
 
+
+
+        Stack<Vertex> crossroads=new Stack();
+        LinkedList<Vertex> visited= new LinkedList<>();
+        LinkedList<Vertex> currentPath= new LinkedList<>();
+        LinkedList<LinkedList<Vertex>> allPaths = new LinkedList<>();
+        Stack<Vertex> unVisited = new Stack<>();
+
+        Vertex current=new Vertex();
+
+        for (Vertex v: getOutgoing(startVertex)) {
+            unVisited.push(v);
+           // System.out.println("Pushed "+ v.getId()+ " to stack");
+        }
+        if(startVertex.getNeighbours()>1){
+            crossroads.push(startVertex);
+        }
+        currentPath.add(startVertex);
+
+        while (!unVisited.isEmpty()){
+            current=unVisited.pop();
+            //System.out.print("Current: "+ current.getId()+"\n");
+          //  System.out.print("Crossroads: ");
+            for (Vertex v: crossroads) {
+            //    System.out.print(v.getId()+" ");
+            }
+          //  System.out.println(" ");
+          //  System.out.println("Current: "+current.getId());
+           // System.out.print("Visited: ");
+            for (Vertex v: visited) {
+             //   System.out.print(v.getId()+" ");
+            }
+          //  System.out.println(" ");
+            if(visited.contains(current)){
+                continue;
+            }
+            if(current.getId() != endVertex.getId()){
+                visited.add(current);
+            }
+            currentPath.add(current);
+            //System.out.print("Current path: ");
+            for (Vertex v: currentPath) {
+               // System.out.print(v.getId()+" ");
+            }
+           // System.out.println(" ");
+            //Når slutnod
+            if(current.getId()==endVertex.getId()){
+                System.out.println("Hittade path!");
+                //allPaths.add(currentPath);
+                LinkedList<Vertex> tmp = new LinkedList<>();
+                for (Vertex v : currentPath) {
+                      System.out.print(v.getId() + " ");
+                       tmp.add(v);
+                }
+                allPaths.add(tmp);
+               System.out.println(" ");
+            }
+            if(current.getNeighbours()>1 && current.getId() != endVertex.getId()){
+                crossroads.push(current);
+            }
+
+            if(current.getId() != endVertex.getId()){
+                for (Vertex v: getOutgoing(current)) {
+                    unVisited.push(v);
+                }
+            }
+
+
+            // Fall för att pusha til crossroads
+            if(current.getNeighbours()==0 || visited.containsAll(getOutgoing(current)) || current.getId()==endVertex.getId() ){
+
+                boolean found = false;
+                Vertex temp = new Vertex();
+                while(!found){
+                    temp = currentPath.removeLast();
+                    if(temp.getId() == crossroads.peek().getId()){
+                        found = true;
+                    }
+                }
+              //  System.out.println("temp är nu: "+ temp.getId());
+                currentPath.add(temp);
+
+                LinkedList<Vertex> trueNeighbours = getOutgoing(temp);
+                if(trueNeighbours.contains(endVertex)){
+                    trueNeighbours.remove(endVertex);
+                }
+
+                if(visited.containsAll(trueNeighbours)){
+                    //System.out.println("Enters remvoe trean");
+                    crossroads.pop();
+                    currentPath.removeLast();
+                }
+            }
+
+        }
+
+        //Gör om alla paths till listor av vikter
+        //Summera alla vikter
+        //Returnera den största summan
+
+        LinkedList<LinkedList<T>> weights = new LinkedList<>();
+
+
+        //Creates a list of lists where each list contains a list of node weights.
+        for (LinkedList<Vertex> list : allPaths) {
+            LinkedList<T> tmp = new LinkedList<>();
+
+            //Adds all vertex weights, with the help of f
+            for (Vertex v : list) {
+                tmp.add((T)wi.f(v.getWeight()));
+            }
+            for (int i = 0; i<list.size()-1;i++){
+              //  System.out.println("Getting edge: "+list.get(i).getId() +" -> "+ list.get(i+1).getId());
+                Edge e = getEdge(list.get(i),list.get(i+1));
+                //Missar någon edge??
+                if(e!=null){
+                    tmp.add((T)wi.g(e.getWeight()));
+                }
+
+            }
+          //  System.out.println(" ");
+            weights.add(tmp);
+        }
+
+        T largest = (T)startVertex.getWeight();
+
+        for (LinkedList<T> list: weights) {
+            T temp=(T)wi.sum(list);
+            if(wi.compare(temp,largest)==temp){
+                largest=temp;
+            }
+        }
+
+        return largest;
+
+    }
+
+    public Edge getEdge(Vertex src, Vertex dest){
+        for (Edge e: edges) {
+            if(e.getStartVertex().equals(src) && e.getEndVertex().equals(dest)){
+                return e;
+            }
+        }
+       // System.out.println("Cant find edge between "+ src.getId() + " and " + dest.getId());
+        return null;
     }
 
 }

@@ -1,4 +1,6 @@
-public class IntWeight<T extends Comparable <T> > implements WeightInterface<Integer> {
+import java.util.LinkedList;
+
+public class IntWeight<T extends Comparable <T> > implements WeightInterface<IntWeight> {
 
     int weight = 0;
 
@@ -7,23 +9,41 @@ public class IntWeight<T extends Comparable <T> > implements WeightInterface<Int
         this.weight=weight;
     }
 
-    @Override
-    public Integer compare(Integer a, Integer b) {
-
-
-        return a.compareTo(b);
-
-    }
-
-    @Override
-    public Integer sum(Integer a, Integer b) {
-
-        int sum = a+b;
-        return sum;
-    }
-
-
     public int getWeight(){
+        return weight;
+    }
+
+    @Override
+    public IntWeight compare(IntWeight a, IntWeight b) {
+        Integer a_val = a.getWeight();
+        Integer b_val = b.getWeight();
+
+        if(a_val>b_val){
+            return a;
+        }else if(a_val.equals(b_val)){
+            return new IntWeight(0);
+        }else {
+            return b;
+        }
+    }
+
+    @Override
+    public IntWeight sum(LinkedList<IntWeight> list) {
+        int sum = 0;
+        for (IntWeight elem: list) {
+            sum+=elem.getWeight();
+        }
+        System.out.println(sum);
+        return new IntWeight(sum);
+    }
+
+    @Override
+    public IntWeight f(IntWeight weight) {
+        return weight;
+    }
+
+    @Override
+    public IntWeight g(IntWeight weight) {
         return weight;
     }
 }
