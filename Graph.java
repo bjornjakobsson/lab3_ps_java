@@ -13,7 +13,10 @@ public class Graph <T>{
         this.edges=new LinkedList<>();
     }
 
-
+    public Graph(LinkedList<Vertex> vertices, LinkedList<Edge> edges){
+        this.vertices=vertices;
+        this.edges=edges;
+    }
     public int add_vertex(T weight) throws IllegalAccessException{
         Vertex newVertex = new Vertex(vertices.size()+1, weight);
 
@@ -46,6 +49,22 @@ public class Graph <T>{
         }
 
         Edge newEdge = new Edge(startVertex,endVertex, weight);
+
+        LinkedList<Vertex> tempVert = new LinkedList<>();
+        LinkedList<Edge> tempEdge = new LinkedList<>();
+
+        tempVert.addAll(vertices);
+        tempEdge.addAll(edges);
+
+        Graph temp = new Graph(tempVert,tempEdge);
+
+        temp.edges.add(newEdge);
+
+        try {
+            topological_ordering(temp);
+        }catch (CreatesCycleException e){
+            System.out.println("Inserting edge between " + startId + " and "+ endId+ " creates cycle. ");
+        }
         startVertex.incrementNeighbours();
         edges.add(newEdge);
 
@@ -124,9 +143,12 @@ public class Graph <T>{
 
     }
 
-    public T longest_path3(Vertex startVertex, Vertex endVertex, WeightInterface wi){
+    public T longest_path(int startId, int endId, WeightInterface wi){
 
 
+        Vertex startVertex = vertices.get(startId);
+
+        Vertex endVertex = vertices.get(endId);
 
         Stack<Vertex> crossroads=new Stack();
         LinkedList<Vertex> visited= new LinkedList<>();
@@ -138,7 +160,6 @@ public class Graph <T>{
 
         for (Vertex v: getOutgoing(startVertex)) {
             unVisited.push(v);
-           // System.out.println("Pushed "+ v.getId()+ " to stack");
         }
         if(startVertex.getNeighbours()>1){
             crossroads.push(startVertex);
@@ -147,18 +168,6 @@ public class Graph <T>{
 
         while (!unVisited.isEmpty()){
             current=unVisited.pop();
-            //System.out.print("Current: "+ current.getId()+"\n");
-          //  System.out.print("Crossroads: ");
-            for (Vertex v: crossroads) {
-            //    System.out.print(v.getId()+" ");
-            }
-          //  System.out.println(" ");
-          //  System.out.println("Current: "+current.getId());
-           // System.out.print("Visited: ");
-            for (Vertex v: visited) {
-             //   System.out.print(v.getId()+" ");
-            }
-          //  System.out.println(" ");
             if(visited.contains(current)){
                 continue;
             }
@@ -166,22 +175,15 @@ public class Graph <T>{
                 visited.add(current);
             }
             currentPath.add(current);
-            //System.out.print("Current path: ");
-            for (Vertex v: currentPath) {
-               // System.out.print(v.getId()+" ");
-            }
-           // System.out.println(" ");
             //Når slutnod
             if(current.getId()==endVertex.getId()){
-                System.out.println("Hittade path!");
-                //allPaths.add(currentPath);
+
                 LinkedList<Vertex> tmp = new LinkedList<>();
                 for (Vertex v : currentPath) {
-                      System.out.print(v.getId() + " ");
+
                        tmp.add(v);
                 }
                 allPaths.add(tmp);
-               System.out.println(" ");
             }
             if(current.getNeighbours()>1 && current.getId() != endVertex.getId()){
                 crossroads.push(current);
@@ -205,7 +207,6 @@ public class Graph <T>{
                         found = true;
                     }
                 }
-              //  System.out.println("temp är nu: "+ temp.getId());
                 currentPath.add(temp);
 
                 LinkedList<Vertex> trueNeighbours = getOutgoing(temp);
@@ -214,17 +215,12 @@ public class Graph <T>{
                 }
 
                 if(visited.containsAll(trueNeighbours)){
-                    //System.out.println("Enters remvoe trean");
                     crossroads.pop();
                     currentPath.removeLast();
                 }
             }
 
         }
-
-        //Gör om alla paths till listor av vikter
-        //Summera alla vikter
-        //Returnera den största summan
 
         LinkedList<LinkedList<T>> weights = new LinkedList<>();
 
@@ -238,9 +234,8 @@ public class Graph <T>{
                 tmp.add((T)wi.f(v.getWeight()));
             }
             for (int i = 0; i<list.size()-1;i++){
-              //  System.out.println("Getting edge: "+list.get(i).getId() +" -> "+ list.get(i+1).getId());
                 Edge e = getEdge(list.get(i),list.get(i+1));
-                //Missar någon edge??
+                //Adds all edge weight, with the help of g-+
                 if(e!=null){
                     tmp.add((T)wi.g(e.getWeight()));
                 }
@@ -269,7 +264,6 @@ public class Graph <T>{
                 return e;
             }
         }
-       // System.out.println("Cant find edge between "+ src.getId() + " and " + dest.getId());
         return null;
     }
 

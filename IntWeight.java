@@ -33,7 +33,6 @@ public class IntWeight<T extends Comparable <T> > implements WeightInterface<Int
         for (IntWeight elem: list) {
             sum+=elem.getWeight();
         }
-        System.out.println(sum);
         return new IntWeight(sum);
     }
 
