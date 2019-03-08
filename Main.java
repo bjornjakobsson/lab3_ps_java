@@ -5,7 +5,7 @@ import java.util.LinkedList;
 public class Main {
     public static void main (String[] input) {
         Main main = new Main();
-        main.test_graph();
+        //main.test_graph();
 
 
 
@@ -15,15 +15,45 @@ public class Main {
         IntWeight b = new IntWeight(2);
         IntWeight c = new IntWeight(3);
 
+
         try {
             g.add_vertex(a);
             g.add_vertex(b);
             g.add_vertex(c);
-        }catch (IllegalAccessException e){
-            e.toString();
+
+        }catch (IllegalAccessException ex){
+            ex.toString();
         }
+        g.add_edge(1,2,a);
+        //g.add_edge(1,3,a);
+       // g.add_edge(3,1,a);
+
+       try {
+           System.out.println(g.isCyclic(g));
+       }catch (CreatesCycleException e){
+           System.out.println("asd");
+       }
+        //g.add_edge(2,3,a);
+       // g.add_edge(3,1,a);
+
+
+       // g.add_edge(3,1,a);
+
+      //  g.longest_path(1,2,a);
+
+       /* try {
+          //  System.out.println("TOPO SORT");
+           LinkedList<Vertex> sorted = g.topological_ordering(g);
+            System.out.println(sorted.size());
+            for (Vertex v : sorted) {
+                System.out.print(v.getId()+ " ");
+            }
+        }catch (CreatesCycleException exe){
+            System.out.println("EXcp");
+        }*/
 
     }
+
     private void test_graph(){
         Graph g = new Graph();
 

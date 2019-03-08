@@ -7,16 +7,27 @@ public class Graph <T>{
 
     private LinkedList<Vertex> vertices;
     private LinkedList<Edge> edges;
+    private LinkedList<Vertex> leafs;
 
     public Graph(){
         this.vertices=new LinkedList<>();
         this.edges=new LinkedList<>();
+        this.leafs=new LinkedList<>();
     }
 
     public Graph(LinkedList<Vertex> vertices, LinkedList<Edge> edges){
         this.vertices=vertices;
         this.edges=edges;
+        this.leafs=new LinkedList<>();
     }
+
+    public Graph(LinkedList<Vertex> vertices, LinkedList<Edge> edges, LinkedList<Vertex> leafs){
+        this.vertices=vertices;
+        this.edges=edges;
+        this.leafs=leafs;
+    }
+
+
     public int add_vertex(T weight) throws IllegalAccessException{
         Vertex newVertex = new Vertex(vertices.size()+1, weight);
 
@@ -31,50 +42,175 @@ public class Graph <T>{
         }else{
             vertices.add(newVertex);
         }
+        //updateLeafs();
         return newVertex.getId();
     }
 
     public void add_edge(int startId, int endId, T weight){
-
         Vertex startVertex=new Vertex();
         Vertex endVertex=new Vertex();
 
         for (Vertex v : vertices) {
             if(v.getId() == startId){
                 startVertex=v;
+                //startVertex=new Vertex(v.getId(),v.getWeight());
             }
             if(v.getId()==endId){
                 endVertex=v;
+                //endVertex=new Vertex(v.getId(),v.getWeight());
             }
         }
 
         Edge newEdge = new Edge(startVertex,endVertex, weight);
+      //  System.out.println("Nu ska kanten "+ newEdge.getStartVertex().getId()+ " -> "+ newEdge.getEndVertex().getId() +
+        //        " testas ");
 
-        LinkedList<Vertex> tempVert = new LinkedList<>();
-        LinkedList<Edge> tempEdge = new LinkedList<>();
+        LinkedList<Vertex> tempV = new LinkedList<>();
+        LinkedList<Edge> tempE = new LinkedList<>();
+        LinkedList<Vertex> tempL = new LinkedList<>();
 
-        tempVert.addAll(vertices);
-        tempEdge.addAll(edges);
+        tempV.addAll(vertices);
+        tempE.addAll(edges);
+        tempL.addAll(leafs);
+        tempE.add(newEdge);
 
-        Graph temp = new Graph(tempVert,tempEdge);
-
-        temp.edges.add(newEdge);
-
+        Graph newGraph = new Graph(tempV,tempE,tempL);
+        newGraph.updateLeafs();
         try {
-            topological_ordering(temp);
+            newGraph.isCyclic(newGraph);
         }catch (CreatesCycleException e){
-            System.out.println("Inserting edge between " + startId + " and "+ endId+ " creates cycle. ");
+            System.out.println("Edge "+ newEdge.getStartVertex().getId() +" -> "+ newEdge.getEndVertex().getId()+ " creates cycle");
         }
-        startVertex.incrementNeighbours();
-        edges.add(newEdge);
+
+        updateLeafs();
+
 
     }
+    private void updateLeafs(){
+        this.leafs.clear();
+        for (int i = 0; i<this.vertices.size();i++){
+            Vertex v = this.vertices.get(i);
+            if(getOutgoing(v).isEmpty()){
+                this.leafs.add(v);
+            }
+        }
+
+    }
+    public boolean isCyclic (Graph g) throws CreatesCycleException{
+
+        System.out.println(g.vertices.isEmpty());
+
+        System.out.println("Vertices");
+        for (int i = 0; i<g.getVertices().size();i++){
+            Vertex v = (Vertex)g.getVertices().get(i);
+            System.out.print(v.getId()+ " ");
+        }
+        System.out.println(" ");
+
+
+        System.out.println("Edges");
+        for (int i = 0; i<g.edges.size();i++){
+            Edge edge = (Edge) g.edges.get(i);
+            System.out.print(edge.getStartVertex().getId() +" -> "+ edge.getEndVertex().getId()+" ");
+        }
+        System.out.println(" ");
+
+
+        System.out.println("Leafs");
+        for (int i = 0; i<g.leafs.size();i++){
+            Vertex v = (Vertex)g.leafs.get(i);
+            System.out.print(v.getId()+ " ");
+        }
+        System.out.println(" ");
+
+        if(g.vertices.isEmpty()){
+            return false;
+        }else if(g.leafs.isEmpty()){
+            throw new CreatesCycleException();
+        }
+        else{
+            System.out.println("SIZE VERT: " + g.vertices.size());
+            return isCyclic(removeAllEdgesToVertex((Vertex)g.leafs.removeLast(),g));
+        }
+    }
+    private Graph removeAllEdgesToVertex(Vertex v,Graph g){
+
+        if(g.vertices.size()==1){
+            g.vertices.removeFirst();
+            g.updateLeafs();
+            return g;
+        }
+
+        for(int i = 0; i<g.edges.size();i++){
+            Edge e = (Edge) g.edges.get(i);
+            if(v.getId()==e.getEndVertex().getId()){
+                g.edges.remove(e);
+                g.vertices.remove(v);
+            }
+            else{
+                g.vertices.remove(v);
+            }
+        }
+        g.updateLeafs();
+        return g;
+
+    }
+    private LinkedList<Vertex> getLeafs(Graph g){
+        for (int i = 0; i<g.getVertices().size();i++){
+            Vertex v = (Vertex) g.getVertices().get(i);
+
+            if(getOutgoing(v).isEmpty()){
+                leafs.add(v);
+            }
+        }
+
+        return leafs;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     public LinkedList<Vertex> topological_ordering (Graph g) throws CreatesCycleException{
 
 
         LinkedList<Vertex> orderedVertices = new LinkedList<>();
-        LinkedList<Vertex> unmarkedVertices = g.vertices;
+        LinkedList<Vertex> unmarkedVertices =g.getVertices();
 
         while(!unmarkedVertices.isEmpty()) {
             Vertex v = unmarkedVertices.pop();
@@ -98,11 +234,12 @@ public class Graph <T>{
         v.setTempMark(true);
 
         for (Vertex m: getOutgoing(v)) {
+
             visit(m,orderedVertices);
+
         }
         v.setPermMark(true);
         orderedVertices.push(v);
-
 
     }
 
@@ -129,6 +266,7 @@ public class Graph <T>{
     }
 
     public void printVertices(){
+        System.out.println("Vertices ");
         for (Vertex v : vertices) {
             System.out.print(v.getId()+" ");
         }
@@ -136,7 +274,7 @@ public class Graph <T>{
     }
 
     public void printEdges(){
-
+        System.out.println("Edges ");
         for (Edge e: edges) {
             System.out.println(e.getStartVertex().getId()+ " -> "+ e.getEndVertex().getId());
         }
@@ -197,7 +335,7 @@ public class Graph <T>{
 
 
             // Fall för att pusha til crossroads
-            if(current.getNeighbours()==0 || visited.containsAll(getOutgoing(current)) || current.getId()==endVertex.getId() ){
+            if((current.getNeighbours()==0 || visited.containsAll(getOutgoing(current)) || current.getId()==endVertex.getId()) && !crossroads.isEmpty()){
 
                 boolean found = false;
                 Vertex temp = new Vertex();
