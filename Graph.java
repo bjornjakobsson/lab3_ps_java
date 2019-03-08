@@ -150,7 +150,7 @@ public class Graph <T>{
 
         Vertex endVertex = vertices.get(endId);
 
-        Stack<Vertex> crossroads=new Stack();
+        Stack<Vertex> crossroads=new Stack<>();
         LinkedList<Vertex> visited= new LinkedList<>();
         LinkedList<Vertex> currentPath= new LinkedList<>();
         LinkedList<LinkedList<Vertex>> allPaths = new LinkedList<>();
@@ -162,6 +162,7 @@ public class Graph <T>{
             unVisited.push(v);
         }
         if(startVertex.getNeighbours()>1){
+            System.out.println("Går in i push crossroads");
             crossroads.push(startVertex);
         }
         currentPath.add(startVertex);
@@ -197,7 +198,7 @@ public class Graph <T>{
 
 
             // Fall för att pusha til crossroads
-            if(current.getNeighbours()==0 || visited.containsAll(getOutgoing(current)) || current.getId()==endVertex.getId() ){
+            if((current.getNeighbours()==0 || visited.containsAll(getOutgoing(current)) || current.getId()==endVertex.getId() ) && !crossroads.isEmpty()){
 
                 boolean found = false;
                 Vertex temp = new Vertex();

@@ -6,10 +6,12 @@ public class IntWeight<T extends Comparable <T> > implements WeightInterface<Int
 
 
     public IntWeight(int weight){
+
         this.weight=weight;
     }
 
     public int getWeight(){
+
         return weight;
     }
 
@@ -37,7 +39,8 @@ public class IntWeight<T extends Comparable <T> > implements WeightInterface<Int
     }
 
     @Override
-    public IntWeight f(IntWeight weight) {
+    public IntWeight f(IntWeight weight)
+    {
         return weight;
     }
 
