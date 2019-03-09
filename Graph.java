@@ -5,7 +5,6 @@
  *              is truly acyclic and directed.
  */
 
-import sun.awt.image.ImageWatched;
 
 import java.util.LinkedList;
 import java.util.Stack;
@@ -109,13 +108,12 @@ public class Graph <T>{
 
 
         try {
-          //  System.out.println("Test edge "+ newEdge.getStartVertex().getId() +" -> "+ newEdge.getEndVertex().getId()+"aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
             newGraph.isCyclic(newGraph);
             this.edges.add(newEdge);
         }catch (CreatesCycleException e){
             System.out.println("Edge "+ newEdge.getStartVertex().getId() +" -> "+ newEdge.getEndVertex().getId()+ " creates cycle");
         }
-
+        startVertex.incrementNeighbours();
         newGraph.updateLeafs(newGraph);
         updateLeafs(this);
 
@@ -159,15 +157,11 @@ public class Graph <T>{
      * Is is determined by the total weight of the path.
      * @param startId
      * @param endId
-     * @param wi
+     * @param wi An object that implements the WeightInterface interface
      * @return
      */
-    public T longest_path(int startId, int endId, WeightInterface wi){
-
-
-
+    public T longest_path(int startId, int endId, WeightInterface wi)throws IllegalAccessException{
         Vertex startVertex=new Vertex();
-
         Vertex endVertex= new Vertex();
 
         for (Vertex v : vertices) {
@@ -184,8 +178,7 @@ public class Graph <T>{
         LinkedList<Vertex> currentPath= new LinkedList<>();
         LinkedList<LinkedList<Vertex>> allPaths = new LinkedList<>();
         Stack<Vertex> unVisited = new Stack<>();
-
-        Vertex current=new Vertex();
+        Vertex current;
 
         for (Vertex v: getOutgoing(startVertex,this)) {
             unVisited.push(v);
@@ -204,12 +197,10 @@ public class Graph <T>{
                 visited.add(current);
             }
             currentPath.add(current);
-            //Når slutnod
+            //Reaches endnode
             if(current.getId()==endVertex.getId()){
-
                 LinkedList<Vertex> tmp = new LinkedList<>();
                 for (Vertex v : currentPath) {
-
                     tmp.add(v);
                 }
                 allPaths.add(tmp);
@@ -224,10 +215,8 @@ public class Graph <T>{
                 }
             }
 
-
             // Fall för att pusha til crossroads
             if((current.getNeighbours()==0 || visited.containsAll(getOutgoing(current,this)) || current.getId()==endVertex.getId()) && !crossroads.isEmpty()){
-
                 boolean found = false;
                 Vertex temp = new Vertex();
                 while(!found){
@@ -239,18 +228,38 @@ public class Graph <T>{
                 currentPath.add(temp);
 
                 LinkedList<Vertex> trueNeighbours = getOutgoing(temp,this);
+
                 if(trueNeighbours.contains(endVertex)){
                     trueNeighbours.remove(endVertex);
                 }
 
-                if(visited.containsAll(trueNeighbours)){
+                if(visited.containsAll(trueNeighbours)&&crossroads.size()>1){
                     crossroads.pop();
                     currentPath.removeLast();
                 }
             }
 
         }
+        return getLargest(startVertex,endVertex,allPaths,wi);
+    }
 
+    /**
+     * Compares weights of all paths and returns the largest one.
+     * All comparisons/additions is performed by the methods 'compare' and 'add'
+     * defined in the WeightInterface.
+     * @param startVertex
+     * @param endVertex
+     * @param allPaths
+     * @param wi
+     * @return
+     * @throws IllegalAccessException
+     */
+    private T getLargest(Vertex startVertex, Vertex endVertex, LinkedList<LinkedList<Vertex>> allPaths, WeightInterface wi)
+    throws IllegalAccessException{
+        T largest = (T)startVertex.getWeight();
+        if (allPaths.isEmpty()){
+            throw new IllegalAccessException("No path from "+startVertex.getId() + " to " + endVertex.getId());
+        }
         LinkedList<LinkedList<T>> weights = new LinkedList<>();
 
 
@@ -270,11 +279,8 @@ public class Graph <T>{
                 }
 
             }
-            //  System.out.println(" ");
             weights.add(tmp);
         }
-
-        T largest = (T)startVertex.getWeight();
 
         for (LinkedList<T> list: weights) {
             T temp=(T)wi.sum(list);
@@ -282,11 +288,20 @@ public class Graph <T>{
                 largest=temp;
             }
         }
-
         return largest;
-
     }
 
+    /**
+     * Prints a path of vertices
+     * @param path
+     */
+    private void printPath(LinkedList<Vertex> path){
+        System.out.println("Path:");
+        for (Vertex v : path) {
+            System.out.print(v.getId()+" ");
+        }
+        System.out.println(" ");
+    }
     /**
      * isCyclic
      * Tests if a graph is cyclic
@@ -295,11 +310,6 @@ public class Graph <T>{
      * @throws CreatesCycleException
      */
     public boolean isCyclic (Graph g) throws CreatesCycleException{
-
-      //  printVertices(g.vertices);
-      //  printEdges(g.edges);
-      //  printLeafs(g.leafs);
-
 
         if(g.vertices.isEmpty() || g.edges.isEmpty()){
             return false;
@@ -318,10 +328,8 @@ public class Graph <T>{
      * @return
      */
     private Graph removeAllEdgesToVertex(Vertex v,Graph g){
-      //  System.out.println("Edges i remove: ");
         LinkedList<Edge> theEdges=new LinkedList<>();
         theEdges.addAll(g.edges);
-      //  printEdges(g.edges);
         if(g.vertices.size()==1){
             g.vertices.removeFirst();
             g.updateLeafs(g);
@@ -335,19 +343,6 @@ public class Graph <T>{
                 g.vertices.remove(v);
             }
         }
-       /* for(int i = 0; i<g.edges.size();i++){
-            Edge e = (Edge) g.edges.get(i);
-            System.out.println(i);
-            Edge ed = (Edge)g.edges.getLast();
-            //System.out.println(e.getStartVertex().getId()+" -> "+ e.getEndVertex().getId()+" ");
-            if(v.getId()==e.getEndVertex().getId()){
-                g.edges.remove(e);
-                g.vertices.remove(v);
-            }
-            else{
-                g.vertices.remove(v);
-            }
-        }*/
         g.updateLeafs(g);
         return g;
 
@@ -411,7 +406,6 @@ public class Graph <T>{
      * Updates the leaf list of a graph
      */
     private void updateLeafs(Graph g){
-        //Borde egentligen vara: Om getOutGoing(v) = 0 && v inte är disconnected.
         g.leafs.clear();
         if(g.vertices.size()==1){
             g.leafs.addAll(g.vertices);
@@ -426,6 +420,11 @@ public class Graph <T>{
 
     }
 
+    /**
+     *
+     * @param g
+     * @return
+     */
     private LinkedList<Vertex> getLeafs(Graph g){
         for (int i = 0; i<g.getVertices().size();i++){
             Vertex v = (Vertex) g.getVertices().get(i);
@@ -504,6 +503,11 @@ public class Graph <T>{
         }
         return null;
     }
+
+    /**
+     *
+     * @return
+     */
     public LinkedList<Vertex> getLeafs(){
         return this.leafs;
     }
