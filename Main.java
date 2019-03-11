@@ -6,24 +6,8 @@ public class Main {
     public static void main (String[] input) {
         Main main = new Main();
         main.test_graph();
-
-
-
-        Graph g = new Graph();
-
-        IntWeight a = new IntWeight(1);
-        IntWeight b = new IntWeight(2);
-        IntWeight c = new IntWeight(3);
-
-        try {
-            g.add_vertex(a);
-            g.add_vertex(b);
-            g.add_vertex(c);
-        }catch (IllegalAccessException e){
-            e.toString();
-        }
-
     }
+
     private void test_graph(){
         Graph g = new Graph();
 
@@ -54,24 +38,38 @@ public class Main {
         g.add_edge(1,2,a);
         g.add_edge(1,3,a);
 
-
-        g.add_edge(2,1,a);
         g.add_edge(2,4,a);
         g.add_edge(2,5,a);
         g.add_edge(2,8,a);
 
-        g.add_edge(4,8,a);
-
         g.add_edge(3,6,a);
         g.add_edge(3,7,a);
         g.add_edge(3,8,a);
-        //g.add_edge(3,8,a);
 
-        g.add_edge(6,8,a);
+        g.add_edge(4,8,a);
 
-        IntWeight weight= (IntWeight) g.longest_path(0,7, a);
-        System.out.println("The largest weight is: "+ weight.getWeight());
+        try{
+            IntWeight weight= (IntWeight) g.longest_path(1,8, a);
+            System.out.println("\nThe largest weight is: "+ weight.getWeight());
+        }catch (IllegalAccessException e1){
+            System.out.println(e1.toString());
+        }
+        try{
+            IntWeight weight= (IntWeight) g.longest_path(1,8, a);
+            System.out.println("\nThe largest weight is: "+ weight.getWeight());
+        }catch (IllegalAccessException e1){
+            System.out.println(e1.toString());
+        }
 
+    }
+    private Graph cpyGraph(Graph g){
+
+        LinkedList<Vertex> vertices = new LinkedList<>();
+        LinkedList<Edge> edges = new LinkedList<>();
+        LinkedList<Vertex> leafs = new LinkedList<>();
+
+        Graph newGraph = new Graph(vertices,edges,leafs);
+        return newGraph;
     }
 
 
