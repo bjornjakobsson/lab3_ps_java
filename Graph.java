@@ -3,6 +3,9 @@
  * Description: A class that represents a directed acyclic graph.
  *              If all edges is added by the add_edge method. It is ensured that the graph
  *              is truly acyclic and directed.
+ *
+ * @author      Emilia Modig, Björn Jakobsson, Johan Huusko
+ * @version     1.0
  */
 
 
@@ -16,7 +19,8 @@ public class Graph <T>{
     private LinkedList<Vertex> leafs;
 
     /**
-     * Constructor
+     * Constructor for Graph
+     * Used to create an empty Graph
      */
     public Graph(){
         this.vertices=new LinkedList<>();
@@ -25,9 +29,10 @@ public class Graph <T>{
     }
 
     /**
-     * Constructor
-     * @param vertices
-     * @param edges
+     * Constructor for Graph
+     * To be used if vertices and edges are known when creating graph
+     * @param vertices a list of vertices
+     * @param edges a list of edges
      */
     public Graph(LinkedList<Vertex> vertices, LinkedList<Edge> edges){
         this.vertices=vertices;
@@ -36,10 +41,11 @@ public class Graph <T>{
     }
 
     /**
-     * Constructor
-     * @param vertices
-     * @param edges
-     * @param leafs
+     * Constructor for Graph
+     * To be used if the vertices, edges and leafs are known when creating a graph
+     * @param vertices a list of vertices
+     * @param edges a list of edges
+     * @param leafs a list of leafs
      */
     public Graph(LinkedList<Vertex> vertices, LinkedList<Edge> edges, LinkedList<Vertex> leafs){
         this.vertices=vertices;
@@ -48,10 +54,9 @@ public class Graph <T>{
     }
 
     /**
-     * add_vertex
      * Adds a vertex to the graph. It needs to have the same weight type as the other vertices already in the graph.
      * If there graph is empty, the given type is set as the vertex type.
-     * @param weight
+     * @param weight the weight of the vertex
      * @return
      * @throws IllegalAccessException
      */
@@ -72,12 +77,11 @@ public class Graph <T>{
     }
 
     /**
-     * add_edge
      * Adds an edge between two vertices. If the edge created by the two vertices creates a cycle, the edge is discarded
      * and the edge does not get added to the graph.
-     * @param startId
-     * @param endId
-     * @param weight
+     * @param startId start id of edge
+     * @param endId end id of edge
+     * @param weight weight of the edge
      */
     public void add_edge(int startId, int endId, T weight){
         Vertex startVertex=new Vertex();
@@ -111,7 +115,7 @@ public class Graph <T>{
             newGraph.isCyclic(newGraph);
             this.edges.add(newEdge);
         }catch (CreatesCycleException e){
-            System.out.println("Edge "+ newEdge.getStartVertex().getId() +" -> "+ newEdge.getEndVertex().getId()+ " creates cycle");
+            System.out.println("Edge "+ newEdge.getStartVertex().getId() +" -> "+ newEdge.getEndVertex().getId()+ " creates cycle: Will not be added to graph");
         }
         startVertex.incrementNeighbours();
         newGraph.updateLeafs(newGraph);
@@ -123,12 +127,11 @@ public class Graph <T>{
     /**
      * topological_ordering
      * Sorts the vertices in a topological ordering. Can only be done if the graph is acyclic.
-     * @param g
-     * @return
+     * @param g the graph to look through
+     * @return a list of vertices
      * @throws CreatesCycleException
      */
     public LinkedList<Vertex> topological_ordering (Graph g) throws CreatesCycleException{
-        //Vad händer med noder som är disconected? Ska dom tas med?
 
         LinkedList<Vertex> tempV = new LinkedList<>();
         LinkedList<Edge> tempE = new LinkedList<>();
@@ -155,8 +158,8 @@ public class Graph <T>{
      * Returns the weight of the longest path between two vertices.
      * The longest path is not determined by the "ammount of steps" from the start vertex to the end vertex.
      * Is is determined by the total weight of the path.
-     * @param startId
-     * @param endId
+     * @param startId start id of search
+     * @param endId end id of search
      * @param wi An object that implements the WeightInterface interface
      * @return
      */
@@ -240,6 +243,7 @@ public class Graph <T>{
             }
 
         }
+
         return getLargest(startVertex,endVertex,allPaths,wi);
     }
 
@@ -280,10 +284,12 @@ public class Graph <T>{
 
             }
             weights.add(tmp);
+
         }
 
         for (LinkedList<T> list: weights) {
             T temp=(T)wi.sum(list);
+
             if(wi.compare(temp,largest)==temp){
                 largest=temp;
             }
