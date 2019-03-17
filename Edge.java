@@ -2,7 +2,8 @@
  * Class:       Edge
  * Description: A representation of an edge in a graph.
  *              Has a start and end node.
- * @param <T>
+ * @author      Emilia Modig, Björn Jakobsson, Johan Huusko
+ * @param <T>   Type of weight should be specified when creating an edge
  */
 
 public class Edge <T>{
@@ -13,10 +14,10 @@ public class Edge <T>{
 
 
     /**
-     * Constructor
-     * @param startVertex
-     * @param endVertex
-     * @param weight
+     * Constructor for en Edge object
+     * @param startVertex start vertex of the edge
+     * @param endVertex end vertex of the edge
+     * @param weight weight of the edge
      */
     public Edge(Vertex startVertex, Vertex endVertex, T weight){
         this.startVertex = startVertex;
@@ -24,15 +25,28 @@ public class Edge <T>{
         this.weight=weight;
     }
 
-    //Getters and setter
-    public Vertex getStartVertex(){
+    /**
+     * Used to return start index of en edge object
+     * @return returns the start index of the edge
+     */
+    public Vertex getStartVertex() {
         return startVertex;
+
     }
 
-    public Vertex getEndVertex(){
+    /**
+     * Get end vertex for an edge
+     * @return returns the end vertex of an edge
+     */
+    public Vertex getEndVertex() {
         return endVertex;
+
     }
 
+    /**
+     * Returns the weight of an edge
+     * @return the weight of an edge
+     */
     public T getWeight(){
         return weight;
     }

@@ -1,16 +1,21 @@
-import sun.awt.image.ImageWatched;
-
-import java.util.LinkedList;
-
+/**
+ * Class:       Main
+ * Description: Runs test suit for an implementation of a DAG.
+ *              Tests try to create a DAG from vertices and edges, also tries to create cyclic graphs (which should not
+ *              be possible.
+ *
+ * @author      Emilia Modig, Björn Jakobsson, Johan Huusko
+ */
 @SuppressWarnings("Duplicates")
 public class Main {
     public static void main (String[] input) {
         Main main = new Main();
-        main.test_graph();
         main.test_string_weight();
+        main.test_graph();
         main.test_cyclic_string();
         main.test_cyclic_int();
     }
+
 
     /**
      * Tests the case where the DAG uses StringWeight as weight.
@@ -21,6 +26,7 @@ public class Main {
      */
     @SuppressWarnings("Duplicates")
     private void test_string_weight(){
+        System.out.println("\nRunning test_string_weight");
 
         Graph<StringWeight> g = new Graph<>();
 
@@ -62,6 +68,7 @@ public class Main {
         }
 
         try {
+
             StringWeight longest = g.longest_path(1,8, a);
             System.out.println("The weight of the longest path is: " + longest.getWeight());
         } catch (IllegalAccessException e1) {
@@ -78,6 +85,8 @@ public class Main {
      */
     @SuppressWarnings("Duplicates")
     private void test_graph(){
+        System.out.println("\nRunning test_graph");
+
         Graph<IntWeight> g = new Graph<>();
 
         IntWeight a = new IntWeight(1);
@@ -128,8 +137,9 @@ public class Main {
 
 
         try{
+
             IntWeight weight= g.longest_path(1,8, a);
-            System.out.println("\nThe weight of the longest path is: "+ weight.getWeight());
+            System.out.println("The weight of the longest path is: "+ weight.getWeight());
         }catch (IllegalAccessException e1){
             System.out.println(e1.toString());
         }
@@ -143,6 +153,7 @@ public class Main {
      */
     @SuppressWarnings("Duplicates")
     private void test_cyclic_string(){
+        System.out.println("\nRunning test_cyclic_string");
 
         Graph<StringWeight> g = new Graph<StringWeight>();
 
@@ -183,8 +194,9 @@ public class Main {
         }
 
         try {
+
             StringWeight longest = g.longest_path(1,6,a);
-            System.out.println("\nThe weight of longest path is: " + longest.getWeight());
+            System.out.println("The weight of longest path is: " + longest.getWeight());
         } catch (IllegalAccessException e1) {
             System.out.println("Could not find longest path, graph is cyclic: " + e1.toString());
         }
@@ -197,6 +209,7 @@ public class Main {
      * Test should not add edges that creates a cycle to the graph
      */
     private void test_cyclic_int() {
+        System.out.println("\nRunning test_cyclic_int");
 
         Graph<IntWeight> g = new Graph<>();
 
@@ -243,8 +256,9 @@ public class Main {
 
 
         try {
+
             IntWeight weight = g.longest_path(1, 8, a);
-            System.out.println("\nThe weight of the longest path is: " + weight.getWeight());
+            System.out.println("The weight of the longest path is: " + weight.getWeight());
         } catch (IllegalAccessException e1) {
             System.out.println("Could not find longest path, graph is cyclic: " + e1.toString());
 
