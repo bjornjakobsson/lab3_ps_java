@@ -2,6 +2,7 @@
  * Class:       Vertex
  * Description: A representation of a vertex in a graph.
  * @param <T>
+ * @author      Emilia Modig, Björn Jakobsson, Johan Huusko
  */
 
 public class Vertex <T> {
@@ -16,8 +17,9 @@ public class Vertex <T> {
 
     /**
      * Constructor
-     * @param id
-     * @param weight
+     * Creates a vertex with id and weight
+     * @param id the id of the vertex
+     * @param weight the weight of the vertex
      */
     public Vertex (int id, T weight){
         this.id=id;
@@ -27,7 +29,8 @@ public class Vertex <T> {
     }
 
     /**
-     * Constructor
+     * Constructor for vertex
+     * Creates an empty vertex with no information in it.
      */
     public Vertex(){
 
